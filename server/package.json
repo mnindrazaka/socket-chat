@@ -1,0 +1,27 @@
+{
+  "name": "server-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch-ts": "tsc --watch",
+    "watch-node": "nodemon build/index.js",
+    "dev": "concurrently 'npm run watch-ts' 'npm run watch-node'",
+    "start": "node build/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.16.0",
+    "@types/node": "^10.12.18",
+    "@types/socket.io": "^2.1.2",
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0",
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "nodemon": "^1.18.9",
+    "tslint": "^5.12.1"
+  }
+}
