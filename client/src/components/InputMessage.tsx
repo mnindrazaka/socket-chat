@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import styled from "styled-components"
 
 interface IProps {
+  onTyping: () => void
   onSubmit: (value: string) => void
 }
 
@@ -15,6 +16,7 @@ export default class InputMessage extends Component<IProps, IState> {
   }
 
   public changeValue(value: string) {
+    this.props.onTyping()
     this.setState({ value })
   }
 

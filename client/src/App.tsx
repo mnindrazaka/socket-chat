@@ -4,26 +4,37 @@ import styled from "styled-components"
 import InputMessage from "./components/InputMessage"
 import Login from "./components/Login"
 import Messages from "./components/Messages"
+import Typing from "./components/Typing"
 
 interface IState {
   nickname: string
   messages: IMessage[]
+  typing: ITyping
 }
 
 class App extends Component<{}, IState> {
   public state: IState = {
     nickname: "",
     messages: [],
+    typing: {
+      isTyping: false,
+      nickname: "",
+    },
   }
 
   public socket = socketIOClient("http://192.168.1.7:3000")
 
   public componentDidMount() {
     this.listenMessage()
+    this.listenTyping()
   }
 
   public listenMessage() {
     this.socket.on("message", (message: IMessage) => this.addMessage(message))
+  }
+
+  public listenTyping() {
+    this.socket.on("typing", (typing: ITyping) => this.setState({ typing }))
   }
 
   public addMessage(message: IMessage) {
@@ -39,6 +50,13 @@ class App extends Component<{}, IState> {
     })
   }
 
+  public notifyTyping() {
+    this.socket.emit("typing", {
+      isTyping: true,
+      nickname: this.state.nickname,
+    })
+  }
+
   public login(nickname: string) {
     this.setState({ nickname })
   }
@@ -50,8 +68,12 @@ class App extends Component<{}, IState> {
   public renderChatRoom() {
     return this.isLoggedin() ? (
       <Container>
+        <Typing typing={this.state.typing} />
         <Messages messages={this.state.messages} />
-        <InputMessage onSubmit={(message) => this.sendMessage(message)} />
+        <InputMessage
+          onTyping={() => this.notifyTyping()}
+          onSubmit={(message) => this.sendMessage(message)}
+        />
       </Container>
     ) : (
       <Login onSubmit={(nickname) => this.login(nickname)} />

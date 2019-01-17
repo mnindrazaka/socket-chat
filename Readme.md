@@ -8,6 +8,6 @@ Simple chat app using node, socket io, react, and typescript
 
 - [x] Add support for nicknames.
 
-- [ ] Add “{user} is typing” functionality.
+- [x] Add “{user} is typing” functionality.
 
 - [ ] Show who’s online.

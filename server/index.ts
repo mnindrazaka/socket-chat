@@ -6,16 +6,22 @@ const app = express()
 const server = new http.Server(app)
 const io = socketIO(server)
 
-io.on("connection", (socket) => {
-  // io.emit("message", "a user joined chat")
+let timeout: any
 
+io.on("connection", (socket) => {
   socket.on("message", (message: IMessage) => {
     io.emit("message", message)
   })
 
-  // socket.on("disconnect", () => {
-  //   io.emit("message", "a user leaved chat")
-  // })
+  socket.on("typing", (typing: ITyping) => {
+    clearInterval(timeout)
+    timeout = setTimeout(
+      () => io.emit("typing", { ...typing, isTyping: false }),
+      1000
+    )
+
+    io.emit("typing", typing)
+  })
 })
 
 server.listen(3000, () => console.log("server listening on port 3000"))
