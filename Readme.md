@@ -4,7 +4,7 @@ Simple chat app using node, socket io, react, and typescript
 
 ## Todo
 
-- [ ] Broadcast a message to connected users when someone connects or disconnects.
+- [x] Broadcast a message to connected users when someone connects or disconnects.
 
 - [ ] Add support for nicknames.
 

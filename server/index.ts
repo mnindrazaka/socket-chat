@@ -7,9 +7,14 @@ const server = new http.Server(app)
 const io = socketIO(server)
 
 io.on("connection", (socket) => {
-  console.log("a user connected")
+  io.emit("message", "a user joined chat")
+
   socket.on("message", (message) => {
     io.emit("message", message)
+  })
+
+  socket.on("disconnect", () => {
+    io.emit("message", "a user leaved chat")
   })
 })
 
