@@ -1,10 +1,10 @@
 import express from "express"
 import http from "http"
-import socketio from "socket.io"
+import socketIO from "socket.io"
 
 const app = express()
 const server = new http.Server(app)
-const io = socketio(server)
+const io = socketIO(server)
 
 io.on("connection", (socket) => {
   console.log("a user connected")
