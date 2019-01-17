@@ -2,13 +2,15 @@ import React, { Component } from "react"
 import styled from "styled-components"
 
 interface IProps {
-  messages: string[]
+  messages: IMessage[]
 }
 
 export default class Messages extends Component<IProps> {
   public renderMessages() {
     return this.props.messages.map((message, index) => (
-      <Message key={index}>{message}</Message>
+      <Message key={index}>
+        {message.nickname}: {message.value}
+      </Message>
     ))
   }
 

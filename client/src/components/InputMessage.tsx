@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import styled from "styled-components"
 
 interface IProps {
-  onSubmit: (message: string) => void
+  onSubmit: (value: string) => void
 }
 
 interface IState {

@@ -7,7 +7,10 @@
       "options": "never"
     },
     "no-console": false,
-    "trailing-comma": true
+    "trailing-comma": true,
+    "interface-name": {
+      "options": "always-prefix"
+    }
   },
   "rulesDirectory": []
 }
