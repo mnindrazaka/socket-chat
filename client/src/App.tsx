@@ -1,17 +1,16 @@
 import React, { Component, Fragment } from "react"
 import socketIOClient from "socket.io-client"
-import Input from "./components/Input"
+import styled from "styled-components"
+import InputMessage from "./components/InputMessage"
 import Messages from "./components/Messages"
 
 interface IState {
   messages: string[]
-  input: string
 }
 
 class App extends Component<{}, IState> {
   public state: IState = {
     messages: [],
-    input: "",
   }
 
   public socket = socketIOClient("http://localhost:3000")
@@ -30,27 +29,26 @@ class App extends Component<{}, IState> {
     this.setState({ messages })
   }
 
-  public changeInput(input: string) {
-    this.setState({ input })
-  }
-
-  public sendMessage() {
-    this.socket.emit("message", this.state.input)
-    this.setState({ input: "" })
+  public sendMessage(message: string) {
+    this.socket.emit("message", message)
   }
 
   public render() {
     return (
-      <Fragment>
+      <Container>
         <Messages messages={this.state.messages} />
-        <Input
-          value={this.state.input}
-          onChange={(value) => this.changeInput(value)}
-          onSubmit={() => this.sendMessage()}
-        />
-      </Fragment>
+        <InputMessage onSubmit={(message) => this.sendMessage(message)} />
+      </Container>
     )
   }
 }
+
+const Container = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+`
 
 export default App
