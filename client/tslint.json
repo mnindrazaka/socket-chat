@@ -1,0 +1,18 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended", "tslint-react"],
+  "jsRules": {},
+  "rules": {
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false,
+    "semicolon": {
+      "options": "never"
+    },
+    "trailing-comma": {
+      "options": {
+        "multiline": "always"
+      }
+    }
+  },
+  "rulesDirectory": []
+}
