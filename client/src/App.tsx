@@ -1,31 +1,54 @@
-import React, { Component } from "react"
+import React, { Component, Fragment } from "react"
 import socketIOClient from "socket.io-client"
-import "./App.css"
-import logo from "./logo.svg"
+import Input from "./components/Input"
+import Messages from "./components/Messages"
 
-class App extends Component {
+interface IState {
+  messages: string[]
+  input: string
+}
+
+class App extends Component<{}, IState> {
+  public state: IState = {
+    messages: [],
+    input: "",
+  }
+
+  public socket = socketIOClient("http://localhost:3000")
+
   public componentDidMount() {
-    const socket = socketIOClient("http://localhost:3000")
+    this.listenMessage()
+  }
+
+  public listenMessage() {
+    this.socket.on("message", (message: string) => this.addMessage(message))
+  }
+
+  public addMessage(message: string) {
+    const { messages } = this.state
+    messages.push(message)
+    this.setState({ messages })
+  }
+
+  public changeInput(input: string) {
+    this.setState({ input })
+  }
+
+  public sendMessage() {
+    this.socket.emit("message", this.state.input)
+    this.setState({ input: "" })
   }
 
   public render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Fragment>
+        <Messages messages={this.state.messages} />
+        <Input
+          value={this.state.input}
+          onChange={(value) => this.changeInput(value)}
+          onSubmit={() => this.sendMessage()}
+        />
+      </Fragment>
     )
   }
 }

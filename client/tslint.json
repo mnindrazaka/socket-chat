@@ -8,11 +8,15 @@
     "semicolon": {
       "options": "never"
     },
-    "trailing-comma": {
-      "options": {
-        "multiline": "always"
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "always",
+        "singleline": "never"
       }
-    }
+    ],
+    "interface-name": true,
+    "object-literal-sort-keys": false
   },
   "rulesDirectory": []
 }
