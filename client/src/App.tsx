@@ -1,32 +1,43 @@
 import React, { Component } from "react"
 import socketIOClient from "socket.io-client"
 import styled from "styled-components"
+import Clients from "./components/Clients"
 import InputMessage from "./components/InputMessage"
 import Login from "./components/Login"
+import Logout from "./components/Logout"
 import Messages from "./components/Messages"
 import Typing from "./components/Typing"
 
 interface IState {
-  nickname: string
+  clients: IClient[]
   messages: IMessage[]
   typing: ITyping
+  isLoggedin: boolean
 }
 
 class App extends Component<{}, IState> {
   public state: IState = {
-    nickname: "",
+    clients: [],
     messages: [],
     typing: {
       isTyping: false,
       nickname: "",
     },
+    isLoggedin: false,
   }
 
   public socket = socketIOClient("http://192.168.1.7:3000")
 
   public componentDidMount() {
+    this.listenClients()
     this.listenMessage()
     this.listenTyping()
+  }
+
+  public listenClients() {
+    this.socket.on("clients", (clients: IClient[]) =>
+      this.setState({ clients }),
+    )
   }
 
   public listenMessage() {
@@ -44,35 +55,35 @@ class App extends Component<{}, IState> {
   }
 
   public sendMessage(value: string) {
-    this.socket.emit("message", {
-      nickname: this.state.nickname,
-      value,
-    })
+    this.socket.emit("message", value)
   }
 
   public notifyTyping() {
-    this.socket.emit("typing", {
-      isTyping: true,
-      nickname: this.state.nickname,
-    })
+    this.socket.emit("typing")
   }
 
   public login(nickname: string) {
-    this.setState({ nickname })
+    this.socket.emit("login", nickname)
+    this.setState({ isLoggedin: true })
   }
 
-  public isLoggedin() {
-    return this.state.nickname !== ""
+  public logout() {
+    this.socket.emit("logout")
+    this.setState({ isLoggedin: false, messages: [], clients: [] })
   }
 
   public renderChatRoom() {
-    return this.isLoggedin() ? (
+    return this.state.isLoggedin ? (
       <Container>
         <Typing typing={this.state.typing} />
-        <Messages messages={this.state.messages} />
+        <Logout onClick={() => this.logout()} />
+        <MessagesContainer>
+          <Messages messages={this.state.messages} />
+          <Clients clients={this.state.clients} />
+        </MessagesContainer>
         <InputMessage
           onTyping={() => this.notifyTyping()}
-          onSubmit={(message) => this.sendMessage(message)}
+          onSubmit={(value) => this.sendMessage(value)}
         />
       </Container>
     ) : (
@@ -91,6 +102,12 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 15px;
+`
+
+const MessagesContainer = styled.div`
+  display: flex;
+  flex: 1;
+  margin-bottom: 15px;
 `
 
 export default App

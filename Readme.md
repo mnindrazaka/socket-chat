@@ -2,7 +2,7 @@
 
 Simple chat app using node, socket io, react, and typescript
 
-## Todo
+## Features
 
 - [x] Broadcast a message to connected users when someone connects or disconnects.
 
@@ -10,4 +10,4 @@ Simple chat app using node, socket io, react, and typescript
 
 - [x] Add “{user} is typing” functionality.
 
-- [ ] Show who’s online.
+- [x] Show who’s online.

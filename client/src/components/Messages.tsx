@@ -9,7 +9,7 @@ export default class Messages extends Component<IProps> {
   public renderMessages() {
     return this.props.messages.map((message, index) => (
       <Message key={index}>
-        {message.nickname}: {message.value}
+        {message.nickname ? message.nickname + ":" : null} {message.value}
       </Message>
     ))
   }
@@ -24,7 +24,6 @@ const Container = styled.div`
   padding: 15px;
   flex: 1;
   overflow-y: auto;
-  margin-bottom: 15px;
 `
 const Message = styled.div`
   background: #1163b6;
