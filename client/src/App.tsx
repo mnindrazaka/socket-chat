@@ -26,7 +26,7 @@ class App extends Component<{}, IState> {
     isLoggedin: false,
   }
 
-  public socket = socketIOClient("http://192.168.1.7:3000")
+  public socket = socketIOClient("https://socket-chat-servers.herokuapp.com/")
 
   public componentDidMount() {
     this.listenClients()

@@ -7,7 +7,8 @@
     "watch-ts": "tsc --watch",
     "watch-node": "nodemon build/index.js",
     "dev": "concurrently 'npm run watch-ts' 'npm run watch-node'",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "postinstall": "tsc"
   },
   "author": "",
   "license": "ISC",

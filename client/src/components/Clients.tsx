@@ -15,7 +15,7 @@ export default class Clients extends Component<IProps> {
   public render() {
     return (
       <Container>
-        <Title>Online Users</Title>
+        <Title>Online Users ({this.props.clients.length})</Title>
         <ul>{this.renderClients()}</ul>
       </Container>
     )
