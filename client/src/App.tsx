@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { useEffect, useState } from "react"
 import socketIOClient from "socket.io-client"
 import styled from "styled-components"
 import Clients from "./components/Clients"
@@ -8,92 +8,72 @@ import Logout from "./components/Logout"
 import Messages from "./components/Messages"
 import Typing from "./components/Typing"
 
-interface IState {
-  clients: IClient[]
-  messages: IMessage[]
-  typing: ITyping
-  isLoggedin: boolean
-}
+function App() {
+  const [clients, setClients] = useState<IClient[]>([])
+  const [messages, setMessages] = useState<IMessage[]>([])
+  const [typing, setTyping] = useState<ITyping>({
+    nickname: "",
+    isTyping: false,
+  })
+  const [isLoggedin, setIsLoggedin] = useState(false)
+  const socket = socketIOClient("https://socket-chat-servers.herokuapp.com/")
 
-class App extends Component<{}, IState> {
-  public state: IState = {
-    clients: [],
-    messages: [],
-    typing: {
-      isTyping: false,
-      nickname: "",
-    },
-    isLoggedin: false,
+  useEffect(() => {
+    listenClients()
+    listenMessage()
+    listenTyping()
+  }, [])
+
+  function listenClients() {
+    socket.on("clients", (clients: IClient[]) => setClients(clients))
   }
 
-  public socket = socketIOClient("https://socket-chat-servers.herokuapp.com/")
-
-  public componentDidMount() {
-    this.listenClients()
-    this.listenMessage()
-    this.listenTyping()
+  function listenMessage() {
+    socket.on("message", (message: IMessage) => addMessage(message))
   }
 
-  public listenClients() {
-    this.socket.on("clients", (clients: IClient[]) =>
-      this.setState({ clients }),
-    )
+  function listenTyping() {
+    socket.on("typing", (typing: ITyping) => setTyping(typing))
   }
 
-  public listenMessage() {
-    this.socket.on("message", (message: IMessage) => this.addMessage(message))
-  }
-
-  public listenTyping() {
-    this.socket.on("typing", (typing: ITyping) => this.setState({ typing }))
-  }
-
-  public addMessage(message: IMessage) {
-    const { messages } = this.state
+  function addMessage(message: IMessage) {
     messages.push(message)
-    this.setState({ messages })
+    setMessages(messages)
   }
 
-  public sendMessage(value: string) {
-    this.socket.emit("message", value)
+  function sendMessage(value: string) {
+    socket.emit("message", value)
   }
 
-  public notifyTyping() {
-    this.socket.emit("typing")
+  function notifyTyping() {
+    socket.emit("typing")
   }
 
-  public login(nickname: string) {
-    this.socket.emit("login", nickname)
-    this.setState({ isLoggedin: true })
+  function login(nickname: string) {
+    socket.emit("login", nickname)
+    setIsLoggedin(true)
   }
 
-  public logout() {
-    this.socket.emit("logout")
-    this.setState({ isLoggedin: false, messages: [], clients: [] })
+  function logout() {
+    socket.emit("logout")
+    setIsLoggedin(false)
+    setMessages([])
+    setClients([])
   }
 
-  public renderChatRoom() {
-    return this.state.isLoggedin ? (
-      <Container>
-        <Typing typing={this.state.typing} />
-        <Logout onClick={() => this.logout()} />
-        <MessagesContainer>
-          <Messages messages={this.state.messages} />
-          <Clients clients={this.state.clients} />
-        </MessagesContainer>
-        <InputMessage
-          onTyping={() => this.notifyTyping()}
-          onSubmit={(value) => this.sendMessage(value)}
-        />
-      </Container>
-    ) : (
-      <Login onSubmit={(nickname) => this.login(nickname)} />
-    )
-  }
-
-  public render() {
-    return this.renderChatRoom()
-  }
+  return isLoggedin ? (
+    <Container>
+      <Typing typing={typing} />
+      <Logout onClick={logout} />
+      <MessagesContainer>
+        <Messages messages={messages} />
+        <Clients clients={clients} />
+      </MessagesContainer>
+      <InputMessage onTyping={notifyTyping} onSubmit={sendMessage} />
+    </Container>
+  ) : (
+    <Login onSubmit={login} />
+  )
 }
 
 const Container = styled.div`
